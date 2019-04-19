@@ -68,9 +68,6 @@ public class MusicBoxClient {
         System.out.print("End of playing. Please press Enter to close client.");
       });
       t.start();
-//      t.join();
-
-//      in.hasNextLine();
       
       while(true && t.isAlive()) {
         try {

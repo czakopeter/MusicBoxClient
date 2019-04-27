@@ -24,7 +24,6 @@ public class MusicBoxClient {
     boolean end = false;
     setTransformationTable();
     String msg = createMsg(args);
-    int playingNr = -1;
     
     
     try (
@@ -36,34 +35,18 @@ public class MusicBoxClient {
       syn.open();
       MidiChannel mc = syn.getChannels()[CHANNEL];
       
-      while(!end) {
-        if(msg == null) {
-          System.out.println("Press enter to close client");
-          msg = sc.nextLine();
-        }
-        switch(msg.split(" ")[0]) {
-          case "play":
-            playMusic(sc,pw,playingNr,mc);
-            break;
-            case "":
-            break;
-          default:
-            pw.println(msg);
-            pw.flush();
-        }
-      }
+      playMusic(sc,pw,mc);
       
       syn.close();
-      
-      System.out.println("CLIENT CLOSE");
       s.close();
+      System.out.println("CLIENT CLOSE");
     } catch (MidiUnavailableException | IOException ex) {
       Logger.getLogger(MusicBoxClient.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
-  private static void playMusic(Scanner sc, PrintWriter pw, int playingNr, MidiChannel mc) {
-    playingNr = Integer.parseInt(sc.nextLine());
+  private static void playMusic(Scanner sc, PrintWriter pw, MidiChannel mc) {
+    int playingNr = Integer.parseInt(sc.nextLine());
     System.out.println("Number of playing: " + playingNr);
     
     String line;

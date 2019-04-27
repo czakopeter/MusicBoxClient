@@ -21,10 +21,8 @@ public class MusicBoxClient {
   private static final HashMap<String, Integer> VOICE_TO_CODE = new HashMap<>();
   
   public static void main(String[] args) {
-    boolean end = false;
     setTransformationTable();
     String msg = createMsg(args);
-    
     
     try (
       Socket s = new Socket(ADDRESS, PORT);
@@ -35,40 +33,43 @@ public class MusicBoxClient {
       syn.open();
       MidiChannel mc = syn.getChannels()[CHANNEL];
       
-      playMusic(sc,pw,mc);
+      playMusic(sc,pw,msg,mc);
       
       syn.close();
       s.close();
-      System.out.println("CLIENT CLOSE");
+
     } catch (MidiUnavailableException | IOException ex) {
       Logger.getLogger(MusicBoxClient.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
-  private static void playMusic(Scanner sc, PrintWriter pw, MidiChannel mc) {
-    int playingNr = Integer.parseInt(sc.nextLine());
-    System.out.println("Number of playing: " + playingNr);
+  private static void playMusic(Scanner sc, PrintWriter pw, String msg, MidiChannel mc) {
+    pw.println(msg);
+    pw.flush();
     
-    String line;
-    int note = 0;
-    boolean end = false;
-    
-    while(!end) {
-      if(sc.hasNextLine()) {
-        line = sc.nextLine();
-        switch(line) {
-          case "FIN":
-            end = true;
-            break;
-          case "R":
-            mc.noteOff(note);
-            break;
-          default:
-            String[] v = line.split(" ");
-            note = transform(v[0]);
-            mc.noteOn(note, 50);
-            System.out.print(v[1]);
-            break;
+    String[] tmp = sc.nextLine().split(" ");
+    if("playing".equals(tmp[0])) {
+      String[] s;
+      int note = 0;
+      boolean end = false;
+
+      while(!end) {
+        if(sc.hasNextLine()) {
+          mc.noteOff(note);
+          s = sc.nextLine().split(" ");
+          switch(s[0]) {
+            case "FIN":
+              end = true;
+              break;
+            case "R":
+              mc.noteOff(note);
+              break;
+            default:
+              note = transform(s[0]);
+              mc.noteOn(note, 50);
+              System.out.print(s[1] + " ");
+              break;
+          }
         }
       }
     }

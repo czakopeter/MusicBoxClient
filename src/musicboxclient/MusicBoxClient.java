@@ -49,6 +49,7 @@ public class MusicBoxClient {
     
     String[] tmp = sc.nextLine().split(" ");
     if("playing".equals(tmp[0])) {
+      System.out.println("Playnig number: " + tmp[1]);
       String[] s;
       int note = 0;
       boolean end = false;
